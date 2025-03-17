@@ -1,0 +1,70 @@
+:root {
+    --color-main: #aa182c;
+}
+
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.hidden-logo {
+    display: none !important;
+}
+
+.menu-closed {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20%; /* Ýsteðe baðlý, tüm geniþliði kaplasýn diye */
+}
+
+/*.logo img {
+    filter: brightness(0) saturate(100%);*/ /* Logoyu tamamen siyah yapar */
+/*}*/
+
+.logo img {
+    filter: brightness(0) invert(1); /* Logoyu beyaz yapar */
+}
+
+.navbar-header {
+    background-color: var(--color-main) !important;
+}
+
+.navbar-brand-box {
+    background-color: var(--color-main) !important;
+}
+
+#sidebar-menu ul li a {
+    font-size: .790rem !important;
+}
+
+#sidebar-menu {
+    padding: 10px 0 0 0 !important;
+}
+
+.card.sidebar-alert {
+    background-color: #ffffff;
+}
+
+.svg-icon {
+    width: 100%;
+    filter: brightness(0) saturate(100%) invert(13%) sepia(100%) saturate(6000%) hue-rotate(340deg) brightness(80%) contrast(100%);
+}
+
+
+
+
