@@ -1,10 +1,14 @@
-﻿<!doctype html>
+﻿@using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+
+<!doctype html>
 <html lang="en">
 
 <head>
 
     <meta charset="utf-8" />
-    <title>Starter Page | Dason - Admin & Dashboard Template</title>
+    <title>Kamera</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
@@ -304,9 +308,59 @@
                 <!--- Sidemenu -->
                 <div id="sidebar-menu">
                     <!-- Left Menu Start -->
+
                     <ul class="metismenu list-unstyled" id="side-menu">
-                       
+                        @RenderMenuItems((List<KameraApp.Models.Organization>)ViewBag.OrganizationTree)
+                    </ul>
+
+                    @functions {
+                        private IHtmlContent RenderMenuItems(List<KameraApp.Models.Organization> items)
+                        {
+                            var ul = new TagBuilder("ul");
+                            ul.AddCssClass("sub-menu");
+
+                            foreach (var item in items)
+                            {
+                                var li = new TagBuilder("li");
+                                if (item.Children != null && item.Children.Any())
+                                {
+                                    var a = new TagBuilder("a");
+                                    a.Attributes["href"] = "javascript:void(0);";
+                                    a.AddCssClass("has-arrow");
+                                    a.InnerHtml.AppendHtml($"<i data-feather=\"folder\"></i> <span>{item.Name}</span>");
+                                    li.InnerHtml.AppendHtml(a);
+                                    li.InnerHtml.AppendHtml(RenderMenuItems(item.Children));
+                                }
+                                else
+                                {
+                                    var a = new TagBuilder("a");
+                                    a.Attributes["href"] = $"/Camera/ShowCamera?code={item.Code}";
+                                    a.InnerHtml.AppendHtml($"<i data-feather=\"video\"></i> <span>{item.Name}</span>");
+                                    li.InnerHtml.AppendHtml(a);
+                                }
+                                ul.InnerHtml.AppendHtml(li);
+                            }
+
+                            return ul;
+                        }
+                    }
+
+
+                  @*   <ul class="metismenu list-unstyled" id="side-menu">
+
+
                         <li>
+                            <a href="javascript: void(0);" class="has-arrow">
+                                <i data-feather="video"></i>
+                                <span data-key="t-ecommerce"></span>
+                            </a>
+                            <ul class="sub-menu" id="sehir-kameralari-menu" aria-expanded="false">
+                                <!-- Dinamik içerik burada oluşacak -->
+                            </ul>
+                        </li> *@
+
+                       
+                  @*       <li>
                             <a href="index.html">
                                 <i data-feather="home"></i>
                                 <span data-key="t-dashboard">DASHBOARD</span>
@@ -315,7 +369,7 @@
 
                         <li>
                             <a href="javascript: void(0);" class="has-arrow">
-                                <i data-feather="shopping-cart"></i>
+                                <i data-feather="video"></i>
                                 <span data-key="t-ecommerce">ŞEHİR KAMERALARI</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
@@ -344,14 +398,14 @@
 
                         <li>
                             <a href="apps-chat.html">
-                                <i data-feather="message-square"></i>
+                                <i data-feather="pie-chart"></i>
                                 <span data-key="t-chat">YEŞİL ALANLAR</span>
                             </a>
                         </li>
 
                         <li>
                             <a href="javascript: void(0);" class="has-arrow">
-                                <i data-feather="mail"></i>
+                                <i data-feather="book-open"></i>
                                 <span data-key="t-email">KÜTÜPHANELER</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
@@ -362,7 +416,7 @@
 
                         <li>
                             <a href="apps-calendar.html">
-                                <i data-feather="calendar"></i>
+                                <i data-feather="hexagon"></i>
                                 <span data-key="t-calendar">SPOR TESİSLERİ</span>
                             </a>
                         </li>
@@ -393,7 +447,7 @@
 
                         <li>
                             <a href="javascript: void(0);" class="has-arrow">
-                                <i data-feather="layers"></i>
+                                <i class=" bx bx-buildings"></i>
                                 <span data-key="t-authentication">BAŞKANLIK BİNASI</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
@@ -410,7 +464,7 @@
 
                         <li>
                             <a href="javascript: void(0);" class="has-arrow">
-                                <i data-feather="file-text"></i>
+                                <i class="mdi mdi-paw-outline"></i>
                                 <span data-key="t-pages">HAYVAN BARINAĞI</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
@@ -427,7 +481,7 @@
 
                         <li>
                             <a href="layouts-horizontal.html">
-                                <i data-feather="layout"></i>
+                                <i class="bx bx-test-tube"></i>
                                 <span data-key="t-horizontal">BİLİM FATİH</span>
                             </a>
                         </li>
@@ -465,7 +519,7 @@
 
                         <li>
                             <a href="javascript: void(0);" class="has-arrow">
-                                <i data-feather="gift"></i>
+                                <i class="bx bx-sun"></i>
                                 <span data-key="t-ui-elements">BAHÇELER</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
@@ -480,7 +534,7 @@
 
                         <li>
                             <a href="javascript: void(0);">
-                                <i data-feather="box"></i>
+                                <i class="mdi mdi-book-education-outline"></i>
                                 <span data-key="t-forms">ZEYREK AKADEMİ</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
@@ -579,9 +633,9 @@
                                     </ul>
                                 </li>
                             </ul>
-                        </li>
+                        </li> *@
 
-                    </ul>
+                   @*  </ul> *@
 
                     <div class="card sidebar-alert shadow-none text-center mb-0 mt-2">
                         <img class="svg-icon" src="/Dason/HTML/dist/assets/images/cami-removebg-preview.png" alt="">

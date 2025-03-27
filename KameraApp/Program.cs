@@ -1,7 +1,19 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// GEREKLÝ SERVÝSLERÝ EKLE
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthorization(); // <--- Bu satýr eksikti!
+
+// ?? CORS POLÝTÝKASI EKLE
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost", builder =>
+    {
+        builder.WithOrigins("https://localhost:7176") // senin frontend portun
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -9,7 +21,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -17,6 +28,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// ?? CORS'U ROUTING'DEN SONRA KOY
+app.UseCors("AllowLocalhost");
 
 app.UseAuthorization();
 
