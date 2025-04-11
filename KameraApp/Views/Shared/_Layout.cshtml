@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Html
 @using Microsoft.AspNetCore.Mvc.Rendering
+@using KameraApp.Models
+@using System.Collections.Generic
 
 
 <!doctype html>
@@ -303,13 +305,13 @@
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
 
-            <div data-simplebar class="h-100">
+        <div data-simplebar class="h-100">
 
-                <!--- Sidemenu -->
-                <div id="sidebar-menu">
+            <!--- Sidemenu -->
+            <div id="sidebar-menu">
                     <!-- Left Menu Start -->
 
-                    <ul class="metismenu list-unstyled" id="side-menu">
+                  @*   <ul class="metismenu list-unstyled" id="side-menu">
                         @RenderMenuItems((List<KameraApp.Models.Organization>)ViewBag.OrganizationTree)
                     </ul>
 
@@ -344,6 +346,88 @@
                             return ul;
                         }
                     }
+ *@
+
+
+
+                 @*    <ul class="metismenu list-unstyled" id="side-menu">
+                        @foreach (var group in (Dictionary<string, List<Device>>)ViewBag.GroupedDevices)
+                        {
+                            <li>
+                                <a href="javascript:void(0);" class="has-arrow">
+                                    <i data-feather="folder"></i>
+                                    <span>@group.Key</span> <!-- orgName -->
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    @foreach (var device in group.Value)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("ShowCamera", "Camera", new { deviceCode = device.DeviceCode })">
+                                                <i data-feather="video"></i>
+                                                <span>@device.DeviceName</span>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    </ul> *@
+
+
+                    <ul class="metismenu list-unstyled" id="side-menu">
+                        @RenderMenu((List<KameraApp.Models.Organization>)ViewBag.OrganizationTree)
+                    </ul>
+
+                    @functions {
+                        private IHtmlContent RenderMenu(List<KameraApp.Models.Organization> items)
+                        {
+                            var ul = new TagBuilder("ul");
+                            ul.AddCssClass("sub-menu");
+
+                            foreach (var item in items)
+                            {
+                                var li = new TagBuilder("li");
+
+                                var a = new TagBuilder("a");
+                                a.Attributes["href"] = "javascript:void(0);";
+                                a.AddCssClass("has-arrow");
+                                a.InnerHtml.AppendHtml($"<i data-feather=\"folder\"></i> <span>{item.Name}</span>");
+                                li.InnerHtml.AppendHtml(a);
+
+                                var innerUl = new TagBuilder("ul");
+                                innerUl.AddCssClass("sub-menu");
+
+                                // Alt organizasyonları ekle
+                                if (item.Children != null && item.Children.Any())
+                                {
+                                    innerUl.InnerHtml.AppendHtml(RenderMenu(item.Children));
+                                }
+
+                                // Bu organizasyona bağlı cihaz isimlerini ekle
+                                if (item.MatchedDevices != null && item.MatchedDevices.Any())
+                                {
+                                    foreach (var device in item.MatchedDevices)
+                                    {
+                                        var deviceLi = new TagBuilder("li");
+                                        deviceLi.InnerHtml.AppendHtml($@"
+                    <a href=""/Camera/ShowCamera?deviceCode={device.DeviceCode}"">
+                    <i data-feather=""video""></i> {device.DeviceName}
+                    </a>");
+                                        innerUl.InnerHtml.AppendHtml(deviceLi);
+                                    }
+                                }
+
+                                if (innerUl.InnerHtml.ToString().Length > 0)
+                                    li.InnerHtml.AppendHtml(innerUl);
+
+                                ul.InnerHtml.AppendHtml(li);
+                            }
+
+                            return ul;
+                        }
+                    }
+
+
 
 
                   @*   <ul class="metismenu list-unstyled" id="side-menu">

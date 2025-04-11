@@ -19,29 +19,49 @@ namespace CameraAutomation.Controllers
         public async Task<IActionResult> Index()
         {
             var httpClient = new HttpClient();
-            var response = await httpClient.GetStringAsync("https://testdashboard.suricifatih.com/api/auth/get-device-org-tree");
 
-            var parsed = JsonConvert.DeserializeObject<ApiResponse>(response);
-            var flatList = parsed.Data.Departments;
+            // 1. Organizasyonları al
+            var orgResponse = await httpClient.GetStringAsync("https://testdashboard.suricifatih.com/api/auth/get-device-org-tree");
+            var orgTree = JsonConvert.DeserializeObject<OrganizationTreeResponse>(orgResponse);
+            var flatOrgs = orgTree.Data.Departments;
 
-            var tree = BuildTree(flatList, "");
+            // 2. Cihazları al
+            var deviceResponse = await httpClient.GetStringAsync("https://testdashboard.suricifatih.com/api/auth/devices");
+            var devicePage = JsonConvert.DeserializeObject<DeviceResponse>(deviceResponse);
+            var allDevices = devicePage.Data.PageData;
+
+            // 3. Organizasyonlara cihaz isimlerini eşleştir
+            var tree = BuildTreeWithMatchedDevices(flatOrgs, "", allDevices);
 
             ViewBag.OrganizationTree = tree;
 
             return View();
         }
 
-        private List<Organization> BuildTree(List<Organization> items, string parentCode)
+        private List<Organization> BuildTreeWithMatchedDevices(List<Organization> items, string parentCode, List<Device> allDevices)
         {
             return items
                 .Where(x => x.ParentCode == parentCode)
                 .Select(x =>
                 {
-                    x.Children = BuildTree(items, x.Code);
+                    x.Children = BuildTreeWithMatchedDevices(items, x.Code, allDevices);
+                    x.MatchedDevices = new List<Device>();
+
+                    if (x.Device != null)
+                    {
+                        foreach (var dev in x.Device)
+                        {
+                            var matched = allDevices.FirstOrDefault(d => d.DeviceCode == dev.Id); // ✅ Eşleştirme burada
+                            if (matched != null)
+                                x.MatchedDevices.Add(matched);
+                        }
+                    }
+
                     return x;
                 })
                 .ToList();
         }
+
 
         public IActionResult Privacy()
         {
