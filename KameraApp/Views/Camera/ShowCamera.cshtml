@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewData["Title"] = "ShowCamera";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var streams = ViewBag.Streams as List<CameraStreamInfo>;
+}
+
+
+
+<h3>Toplam Kamera: @streams?.Count</h3>
+
+@if (streams == null || !streams.Any())
+{
+    <div class="alert alert-warning">Kamera bulunamadı.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var cam in streams)
+        {
+            <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        Kanal: @cam.ChannelId
+                    </div>
+                    <div class="card-body">
+                        <p>@cam.StreamUrl</p>
+                        <video src="@cam.StreamUrl"
+                               style="width:100%; height:240px; object-fit:cover;"
+                               autoplay
+                               muted
+                               controls>
+                            RTSP desteklenmiyor.
+                        </video>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

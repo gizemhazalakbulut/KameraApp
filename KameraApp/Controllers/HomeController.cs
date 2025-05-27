@@ -21,12 +21,12 @@ namespace CameraAutomation.Controllers
             var httpClient = new HttpClient();
 
             // 1. Organizasyonları al
-            var orgResponse = await httpClient.GetStringAsync("https://testdashboard.suricifatih.com/api/auth/get-device-org-tree");
+            var orgResponse = await httpClient.GetStringAsync("https://localhost:7242/api/auth/get-device-org-tree");
             var orgTree = JsonConvert.DeserializeObject<OrganizationTreeResponse>(orgResponse);
             var flatOrgs = orgTree.Data.Departments;
 
             // 2. Cihazları al
-            var deviceResponse = await httpClient.GetStringAsync("https://testdashboard.suricifatih.com/api/auth/devices");
+            var deviceResponse = await httpClient.GetStringAsync("https://localhost:7242/api/auth/devices");
             var devicePage = JsonConvert.DeserializeObject<DeviceResponse>(deviceResponse);
             var allDevices = devicePage.Data.PageData;
 

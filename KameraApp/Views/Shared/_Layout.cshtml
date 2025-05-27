@@ -374,9 +374,19 @@
                     </ul> *@
 
 
+
+                    @{
+                        var tree = ViewBag.OrganizationTree as List<KameraApp.Models.Organization>;
+                        var children = (tree != null && tree.Any())
+                        ? tree.FirstOrDefault()?.Children ?? new List<KameraApp.Models.Organization>()
+                        : new List<KameraApp.Models.Organization>();
+                    }
+
                     <ul class="metismenu list-unstyled" id="side-menu">
-                        @RenderMenu((List<KameraApp.Models.Organization>)ViewBag.OrganizationTree)
+                        @RenderMenu(children)
                     </ul>
+
+
 
                     @functions {
                         private IHtmlContent RenderMenu(List<KameraApp.Models.Organization> items)
